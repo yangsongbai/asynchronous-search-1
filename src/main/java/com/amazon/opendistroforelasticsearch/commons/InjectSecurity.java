@@ -27,55 +27,6 @@ import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.util.concurrent.ThreadContext;
 
-/**
- * For background jobs usage only. User or Roles injection can be done using transport layer only.
- * You can't inject using REST api.
- *
- * Roles injection is based this new feature in security plugin: https://github.com/opendistro-for-elasticsearch/security/pull/560
- *
- * Java example Usage:
- *
- *      try (InjectSecurity injectSecurity = new InjectSecurity(id, settings, client.threadPool().getThreadContext())) {
- *
- *          //add roles to be injected from the configuration.
- *          injectSecurity.inject("user, Arrays.toList("role_1,role_2"));
- *
- *          //Elasticsearch calls that needs to executed in security context.
- *
- *          SearchRequestBuilder searchRequestBuilder = client.prepareSearch(monitor.indexpattern);
- *          SearchResponse searchResponse = searchRequestBuilder
- *                             .setFrom(0).setSize(100).setExplain(true).  execute().actionGet();
- *
- *      } catch (final ElasticsearchSecurityException ex){
- *            //handle the security exception
- *      }
- *
- * Kotlin usage with Coroutines:
- *
- *    //You can also use launch, based on usecase.
- *    runBlocking(RolesInjectorContextElement(monitor.id, settings, threadPool.threadContext, monitor.associatedRoles)) {
- *       //Elasticsearch calls that needs to executed in security context.
- *    }
- *
- *    class InjectContextElement(val id: String, val settings: Settings, val threadContext: ThreadContext, val roles: String)
- *     : ThreadContextElement<Unit> {
- *
- *     companion object Key : CoroutineContext.Key<RolesInjectorContextElement>
- *     override val key: CoroutineContext.Key<*>
- *         get() = Key
- *
- *     var injectSecurity = InjectSecurity(id, settings, threadContext)
- *
- *     override fun updateThreadContext(context: CoroutineContext) {
- *         injectSecurity.injectRoles(roles)
- *     }
- *
- *     override fun restoreThreadContext(context: CoroutineContext, oldState: Unit) {
- *         injectSecurity.close()
- *     }
- *   }
- *
- */
 public class InjectSecurity implements AutoCloseable {
 
     private String id;

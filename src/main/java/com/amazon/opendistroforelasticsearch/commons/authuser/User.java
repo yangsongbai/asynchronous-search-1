@@ -90,8 +90,8 @@ final public class User implements Writeable, ToXContent {
 
     /**
      * Reponse of "GET /_opendistro/_security/authinfo"
-     * @param response
-     * @throws IOException
+     * @param response  响应
+     * @throws IOException 异常
      */
     public User(final Response response) throws IOException {
         this(EntityUtils.toString(response.getEntity()));
@@ -164,8 +164,8 @@ final public class User implements Writeable, ToXContent {
 
     /**
      * User String format must be pipe separated as : user_name|backendrole1,backendrole2|roles1,role2
-     * @param userString
-     * @return
+     * @param userString  用户信息
+     * @return 结束
      */
     public static User parse(final String userString) {
         if (Strings.isNullOrEmpty(userString)) {

@@ -14,4 +14,4 @@
  *   permissions and limitations under the License.
  */
 
-rootProject.name = 'asynchronous-search'
+rootProject.name = 'async-search'

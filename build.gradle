@@ -87,13 +87,53 @@ compileTestJava {
 check.dependsOn jacocoTestReport
 
 esplugin {
-    name 'opendistro-asynchronous-search'
-    description 'Provides support for asynchronous search'
+    name 'async-search'
+    description 'Provides support for async search'
     classname 'com.amazon.opendistroforelasticsearch.search.asynchronous.plugin.AsynchronousSearchPlugin'
 }
 
 tasks.named("integTest").configure {
     it.dependsOn(project.tasks.named("bundlePlugin"))
+}
+
+allprojects {
+    tasks.withType(Javadoc).configureEach { Javadoc javadoc ->
+        // the -quiet here is because of a bug in gradle, in that adding a string option
+        // by itself is not added to the options. By adding quiet, both this option and
+        // the "value" -quiet is added, separated by a space. This is ok since the javadoc
+        // command already adds -quiet, so we are just duplicating it
+        // see https://discuss.gradle.org/t/add-custom-javadoc-option-that-does-not-take-an-argument/5959
+        // javadoc.options.encoding = 'UTF8'
+        javadoc.options.addStringOption('encoding', 'UTF-8')
+        javadoc.options.addStringOption('charSet', 'UTF-8')
+        javadoc.options.addStringOption('Xdoclint:all,-missing', '-quiet')
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        // Try to turn them all off automatically
+        options.compilerArgs << '-Xlint:none'
+        options.compilerArgs << '-nowarn' // same as '-Xlint:none'
+        options.compilerArgs << "-Xlint:-unchecked"
+        options.compilerArgs << '-Xlint:-auxiliaryclass'
+        options.compilerArgs << '-Xlint:-cast'
+        options.compilerArgs << '-Xlint:-classfile'
+        options.compilerArgs << '-Xlint:-dep-ann'
+        options.compilerArgs << '-Xlint:-divzero'
+        options.compilerArgs << '-Xlint:-empty'
+        options.compilerArgs << '-Xlint:-fallthrough'
+        options.compilerArgs << '-Xlint:-finally'
+        options.compilerArgs << '-Xlint:-options'
+        options.compilerArgs << '-Xlint:-overloads'
+        options.compilerArgs << '-Xlint:-overrides'
+        options.compilerArgs << '-Xlint:-path'
+        options.compilerArgs << '-Xlint:-processing'
+        options.compilerArgs << '-Xlint:-rawtypes'
+        options.compilerArgs << '-Xlint:-serial'
+        options.compilerArgs << '-Xlint:-static'
+        options.compilerArgs << '-Xlint:-try'
+        options.compilerArgs << '-Xlint:-varargs'
+        options.compilerArgs << '-Xlint:-deprecation'
+    }
 }
 
 //TODO enable license headers
